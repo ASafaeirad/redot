@@ -1,0 +1,233 @@
+#!/bin/bash
+alias dc='docker-compose'
+
+# clear
+alias c='clear'
+alias cc='clear'
+alias cear='clear'
+alias cler='clear'
+alias clea='clear'
+alias clar='clear'
+alias clewar='clear'
+alias lear='clear'
+alias celra='clear'
+alias clera='clear'
+alias claer='clear'
+alias celar='clear'
+
+# enhance
+alias :q='exit'
+alias chmod='sudo chmod'
+alias dhcpcd='sudo dhcpcd'
+alias apt='sudo apt'
+alias systemctl='sudo systemctl'
+alias cp="cp -i"
+alias df='df -h'
+alias grep='grep --color'
+alias ls='ls --color'
+alias mkdir='mkdir -pv'
+alias reload='source ~/.aliases'
+
+# path shorcuts
+alias ~='cd ~'
+alias ..='cd ..'
+alias dt='cd ~/desktop'
+
+# sysadmin
+alias findstr='grep -rnw'
+alias afind='ack -il'
+alias path='echo -e ${PATH//:/\\n} | sort'
+alias update='apt update'
+alias fuck='killall -9'
+
+# config files
+alias dnsrc='sudoedit /etc/resolv.conf'
+alias hosts='sudoedit /etc/hosts'
+alias bashrc='vim ~/.bashrc'
+alias zalias='vim ~/.aliases'
+alias tmuxrc='vim ~/.tmux.conf'
+
+# file system
+alias l='ls -hAl --group-directories-first'
+alias lsa='ls -AF --group-directories-first'
+alias lless='l | less'
+alias laless='ll | less'
+alias lsd=listDir
+alias rd=rmdir
+alias md='mkdir'
+
+# network
+alias getip="curl -s -S https://icanhazip.com"
+alias localip=getLocalIP
+alias netinfo=getNetInfo
+port() {
+  sudo netstat -tulpn | grep :"$1"
+}
+
+alias ping='ping -i 1 -O'
+for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
+    alias "$method"="curl -X '$method'"
+done
+
+# npm
+alias loadnvm=". /usr/share/nvm/init-nvm.sh"
+alias npmls='npm ls --depth 0'
+alias npmr='npm remove'
+alias npni='npm install'
+alias npms='npm start'
+alias npmt='npm test'
+alias npmd='npm install -D'
+alias npmo='npm outdated'
+alias npmp='npm publish'
+alias npmv='npm -v'
+alias cleannm='find . -name "node_modules" -type d -exec rm -rf {} \;'
+
+# yarn
+alias y='yarn'
+alias yrs='yarn start'
+alias yrd='yarn run dev'
+alias ya='yarn add'
+alias yad='yarn add --dev'
+alias yrt='yarn run test'
+alias yrtw='yarn run test:watch'
+alias yrb='yarn run build'
+alias yr='yarn remove'
+alias ycc='yarn cache clean'
+alias ycc='yarn cache clean'
+alias yui='yarn upgrade-interactive --latest'
+alias yws='yarn workspace'
+alias ysu='curl --compressed -o- -L https://yarnpkg.com/install.sh | bash'
+
+## git
+alias clone='git clone'
+alias gss='git status -s'
+alias gsss='git status'
+
+alias ga='git add'
+alias gaa='git add --all'
+
+alias gb='git branch'
+alias gbr='git branch --remote'
+alias gba='git branch -a'
+alias gbd='git branch -d'
+
+alias gc='git commit -v'
+alias 'gc!'='git commit -v --amend'
+alias gca='git commit -v -a'
+alias 'gca!'='git commit -v -a --amend'
+alias gcam='git commit -a -m'
+alias gcm='git commit -m'
+
+alias gcb='git checkout -b'
+alias gco='git checkout'
+
+alias pull='git pull origin $(git_current_branch)'
+alias push='git push origin $(git_current_branch)'
+alias 'push!'='git push origin $(git_current_branch) --force'
+alias pushu='git push --set-upstream origin $(git_current_branch)'
+
+alias g='git'
+alias gcount='git shortlog -sn'
+alias gl='git log --oneline --decorate'
+alias glog='git log --oneline --decorate --graph --all'
+alias gloga="git log --graph --pretty=format:'%C(yellow)%h%Creset %C(bold blue)%an%C(reset) - %s - %Creset %C(yellow)%d%Creset %C(green)(%cr)%Creset' --abbrev-commit --date=relative --all"
+alias gls='git log --stat'
+alias glsg='git log --graph --decorate --all'
+
+alias gm='git merge'
+alias gma='git merge --abort'
+alias gmom='git merge origin/master'
+alias gmt='git mergetool --no-prompt'
+alias gmtvim='git mergetool --no-prompt --tool=vimdiff'
+alias gmum='git merge upstream/master'
+
+alias gr='git reset'
+alias gra='git reset .'
+
+alias grmv='git remote rename'
+alias grrm='git remote remove'
+alias grset='git remote set-url'
+alias grup='git remote update'
+alias grv='git remote -v'
+
+alias gsta='git stash save'
+alias gstaa='git stash apply'
+alias gstc='git stash clear'
+alias gstd='git stash drop'
+alias gstl='git stash list'
+alias gstp='git stash pop'
+alias gsts='git stash show --text'
+
+alias grb='git rebase'
+alias grba='git rebase --abort'
+alias grbc='git rebase --continue'
+alias grbi='git rebase -i'
+alias grbm='git rebase master'
+alias grbs='git rebase --skip'
+alias grh='git reset HEAD'
+alias grhh='git reset HEAD --hard'
+
+alias gt='git tag'
+alias gtv='git tag | sort -V'
+alias count-line='git total --numstat -- . ":(exclude)yarn.lock"'
+
+# Kills any process that matches a regexp passed to it
+killit() {
+    pgrep | xargs sudo kill
+}
+
+listDir() {
+    ls -l | grep "^d" | awk '{ print $9 }'
+}
+
+getMac() {
+  ip link show "$@" | grep link | awk '{ print $2 }'
+}
+
+getNetInfo() {
+  echo "Local IP: " "$(localip)"
+  echo "Mac Addr: " "$(mac)"
+  echo "Global IP:" "$(getip)"
+}
+
+
+lazyPacman() {
+  case $1 in
+      -S | -D | -S[^sih]* | -R* | -U*)
+          /usr/bin/sudo /usr/bin/pacman "$@" ;;
+  *)      /usr/bin/pacman "$@" ;;
+  esac
+}
+
+# ex - archive extractor
+ex() {
+  if [ -f "$1" ] ; then
+    case "$1" in
+      *.tar.bz2)   tar xjf "$1"   ;;
+      *.tar.xz)    tar xf  "$1"   ;;
+      *.tar.gz)    tar xzf "$1"   ;;
+      *.bz2)       bunzip2 "$1"   ;;
+      *.rar)       unrar x "$1"   ;;
+      *.gz)        gunzip  "$1"   ;;
+      *.tar)       tar xf  "$1"   ;;
+      *.tbz2)      tar xjf "$1"   ;;
+      *.tgz)       tar xzf "$1"   ;;
+      *.zip)       unzip   "$1"   ;;
+      *.Z)         uncompress "$1";;
+      *.7z)        7z x "$1"      ;;
+      *)           echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+mk() {
+  mkdir "$1" && cd "$1" || return
+}
+
+shecan() {
+  echo "nameserver 178.22.122.100" | sudo tee /etc/resolv.conf
+  echo "nameserver 185.51.200.2" | sudo tee -a /etc/resolv.conf
+}
+
