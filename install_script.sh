@@ -27,6 +27,7 @@ chmod +x /usr/local/bin/docker-compose
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 BAKDIR="$HOMEDIR/redot-backup"
+[[ ! -d "$BAKDIR" ]] && mkdir "$BAKDIR"
 [[ -f "$HOMEDIR/.bashrc" ]] && mv "$HOMEDIR/.bashrc" "$BAKDIR/.bashrc"
 
 GITDIR="$HOMEDIR/.redot"
