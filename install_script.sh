@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
 
-HOMEDIR=${1:$HOME}
+HOMEDIR=${1:-$HOME}
+
+echo "-------------"
+echo "$HOMEDIR"
+echo "-------------"
 
 if [[ "$EUID" -ne 0 ]]; then
   echo "Sorry, this script must be ran as root"
