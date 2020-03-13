@@ -37,4 +37,4 @@ pushd "$GITDIR"
 
 git init --bare
 git --git-dir="$GITDIR" --work-tree="$HOMEDIR" remote add origin https://github.com/frontendmonster/redot.git
-git --git-dir="$GITDIR" --work-tree="$HOMEDIR" git pull origin master -u
+git --git-dir="$GITDIR" --work-tree="$HOMEDIR" pull origin master -u
