@@ -1,5 +1,5 @@
 #!/bin/bash
-alias dc='docker-compose'
+alias redot='git --git-dir="$HOME/.redot" --work-tree="$HOME"'
 
 # clear
 alias c='clear'
@@ -170,6 +170,11 @@ alias grhh='git reset HEAD --hard'
 alias gt='git tag'
 alias gtv='git tag | sort -V'
 alias count-line='git total --numstat -- . ":(exclude)yarn.lock"'
+
+# docker
+alias dc='docker-compose'
+alias drmi='sudo docker rmi $(sudo docker images -a --filter=dangling=true -q)'
+alias drm='sudo docker rm $(sudo docker ps --filter=status=exited --filter=status=created -q)'
 
 # Kills any process that matches a regexp passed to it
 killit() {
