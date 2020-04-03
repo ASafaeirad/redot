@@ -18,8 +18,10 @@ alias celar='clear'
 # enhance
 alias :q='exit'
 alias chmod='sudo chmod'
+alias chown='sudo chwon'
 alias dhcpcd='sudo dhcpcd'
 alias apt='sudo apt'
+alias usermod='sudo usermod'
 alias systemctl='sudo systemctl'
 alias cp="cp -i"
 alias df='df -h'
