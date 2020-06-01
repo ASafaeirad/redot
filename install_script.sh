@@ -1,24 +1,30 @@
 #!/bin/bash
 set -e
 
+DOCKER_COMPOSE_VERSION=1.25.5
+ARCH=$(uname -m)
+BAK_DIR="$HOME/redot-backup"
+KERNEL=$(uname -s)
+CODE_NAME=$(lsb_release -cs)
+WARN='\033[0;33m'
+CYAN='\033[1;36m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
 function throw() {
   echo "$1"
   exit 1
 }
 
 function mk_safe() {
-  [[ ! -d "$1" ]] && mkdir "$1"
+  [[ ! -d "$1" ]] && mkdir -p "$1"
 }
 
 function mv_save() {
   [[ -f "$1" ]] && mv "$1" "$2"
 }
 
-WARN='\033[0;33m'
-CYAN='\033[1;36m'
-NC='\033[0m'
-
-function title() {
+function progress() {
   echo
   echo -e "${CYAN}==============================${NC}"
   echo -e "${CYAN}⬢ ${1}${NC}"
@@ -26,9 +32,9 @@ function title() {
   echo
 }
 
-function progress() {
+function success() {
   echo
-  echo -e "${CYAN}⬢ ${1}${NC}"
+  echo -e "${GREEN}✓ ${1}${NC}"
   echo
 }
 
@@ -48,9 +54,17 @@ function print_banner() {
 }
 
 function print_env() {
-  echo "-------------"
-  echo "$HOME"
-  echo "-------------"
+  echo -e "${WARN}$1:${NC} ${2}"
+}
+
+function print_envs() {
+  progress "Environment"
+  print_env "kernel" $KERNEL
+  print_env "arch" $ARCH
+  print_env "codename" $CODE_NAME
+  print_env "home" $HOME
+  print_env "backup dir" $BAK_DIR
+  print_env "docker-compose version" $DOCKER_COMPOSE_VERSION
 }
 
 function check_home() {
@@ -59,53 +73,92 @@ function check_home() {
 
 function install() {
   progress "Installing $1"
-  sudo apt install $1 -y
+  sudo apt-get install "$1" -y
   success "$1 installed successfully"
 }
 
 function install_docker() {
-  install docker.io
+  progress "Installing docker"
+  local DOCKER_ARCH
+  if [ $ARCH = 'x86_64' ]; then
+    DOCKER_ARCH='amd64'
+  fi
+
+  sudo apt-get remove docker docker-engine docker.io containerd runc -y
+  success "old docker version cleaned"
+
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  success "docker gpg keys added successfully"
+  sudo apt-get update
+  sudo add-apt-repository "deb [arch=$DOCKER_ARCH] https://download.docker.com/linux/ubuntu $CODE_NAME stable"
+  success "docker repos added successfully"
+
+  sudo apt-get update
+  sudo apt-get install docker-ce docker-ce-cli containerd.io
+  success "docker gpg keys added successfully"
+
   sudo usermod -aG docker "$USER"
+  success "\"$USER\" user successfully added to docker group"
+
   sudo systemctl enable docker
   sudo systemctl start docker
+  success "docker service successfully initiated"
+}
 
+function install_docker_compose() {
   progress "Installing docker-compose"
-  sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" \
-    -o /usr/local/bin/docker-compose
-  sudo chmod +x /usr/local/bin/docker-compose
-  sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+  local DOCKER_COMPOSE_PATH="/usr/local/bin/docker-compose"
+  sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$KERNEL-${ARCH}" \
+    -o $DOCKER_COMPOSE_PATH
+  sudo chmod +x $DOCKER_COMPOSE_PATH
+  sudo ln -sf $DOCKER_COMPOSE_PATH /usr/bin/docker-compose
   success "docker-compose installed successfully"
 }
 
 function install_packages() {
   progress "Updating repos"
-  sudo apt update -y
+  sudo apt-get update -y
 
+  install apt-transport-https
+  install ca-certificates
+  install gnupg-agent
+  install software-properties-common
   install git
   install tmux
-  instal_docker
+  install_docker
+  install_docker_compose
+}
+
+function backup() {
+  mv_safe "$HOME/$1" "$BAK_DIR/$1"
+  success "Backup $1"
 }
 
 function init_redot() {
   progress "Init redot"
-  local BAKDIR="$HOME/redot-backup"
-  local GITDIR="$HOME/.redot"
-  local GITPARAMS="--git-dir=$GITDIR --work-tree=$HOME"
+  local GIT_DIR="$HOME/.redot"
+  local GIT_PARAMS="--git-dir=$GIT_DIR --work-tree=$HOME"
 
-  mk_safe $BAKDIR
-  mv_safe "$HOME/.bashrc" "$BAKDIR/.bashrc"
+  mk_safe "$BAK_DIR"
+  backup ".bashrc"
 
-  mkdir -p "$GITDIR"
-  pushd "$GITDIR"
+  mkdir -p "$GIT_DIR"
+  pushd "$GIT_DIR"
   git init --bare
   popd
+  success "$GIT_DIR repo created"
 
-  git $GITPARAMS remote add origin https://github.com/frontendmonster/redot.git
-  git $GITPARAMS pull origin master
-  git $GITPARAMS branch --set-upstream-to origin/master master
+  git $GIT_PARAMS remote add origin https://github.com/frontendmonster/redot.git
+  git $GIT_PARAMS pull origin master
+  git $GIT_PARAMS branch --set-upstream-to origin/master master
+  success "redot repo updated successfully"
 }
 
-print_banner
-print_env
-install_packages
-init_redot
+init() {
+  print_banner
+  print_envs
+  install_packages
+  init_redot
+}
+
+init
