@@ -20,7 +20,7 @@ function mk_safe() {
   [[ ! -d "$1" ]] && mkdir -p "$1"
 }
 
-function mv_save() {
+function mv_safe() {
   [[ -f "$1" ]] && mv "$1" "$2"
 }
 
