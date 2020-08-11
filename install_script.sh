@@ -134,6 +134,10 @@ function backup() {
   success "Backup $1"
 }
 
+function cleanup() {
+  sudo apt-get remove command-not-found command-not-found-data -qy
+}
+
 function init_redot() {
   progress "Init redot"
   local GIT_DIR="$HOME/.redot"
@@ -157,6 +161,7 @@ function init_redot() {
 init() {
   print_banner
   print_envs
+  cleanup
   install_packages
   init_redot
 }
