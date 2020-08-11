@@ -1,0 +1,18 @@
+#!/bin/bash
+NAME=$1
+REPO_PATH="$HOME/$NAME.git"
+PROJECT_PATH="$HOME/$NAME"
+
+mkdir "$REPO_PATH"
+mkdir "$PROJECT_PATH"
+
+pushd "$REPO_PATH" || exit
+git init --bare
+popd || exit
+
+cat <<EOF >"$REPO_PATH/hooks/post-receive"
+#!/bin/bash
+git --git-dir $REPO_PATH --work-tree $PROJECT_PATH checkout -f
+EOF
+
+chmod +x "$REPO_PATH"/hooks/post-receive
