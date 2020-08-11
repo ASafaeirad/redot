@@ -16,6 +16,16 @@ alias claer='clear'
 alias celar='clear'
 
 # enhance
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
 alias :q='exit'
 alias chmod='sudo chmod'
 alias chown='sudo chwon'
@@ -25,8 +35,6 @@ alias usermod='sudo usermod'
 alias systemctl='sudo systemctl'
 alias cp="cp -i"
 alias df='df -h'
-alias grep='grep --color'
-alias ls='ls --color'
 alias mkdir='mkdir -pv'
 alias reload='source ~/.aliases'
 
@@ -197,15 +205,6 @@ getNetInfo() {
   echo "Global IP:" "$(getip)"
 }
 
-
-lazyPacman() {
-  case $1 in
-      -S | -D | -S[^sih]* | -R* | -U*)
-          /usr/bin/sudo /usr/bin/pacman "$@" ;;
-  *)      /usr/bin/pacman "$@" ;;
-  esac
-}
-
 # ex - archive extractor
 ex() {
   if [ -f "$1" ] ; then
@@ -237,4 +236,3 @@ shecan() {
   echo "nameserver 178.22.122.100" | sudo tee /etc/resolv.conf
   echo "nameserver 185.51.200.2" | sudo tee -a /etc/resolv.conf
 }
-
