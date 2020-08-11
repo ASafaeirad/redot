@@ -73,7 +73,7 @@ function check_home() {
 
 function install() {
   progress "Installing $1"
-  sudo apt-get install "$1" -y
+  sudo apt-get install "$1" -qy
   success "$1 installed successfully"
 }
 
@@ -84,7 +84,7 @@ function install_docker() {
     DOCKER_ARCH='amd64'
   fi
 
-  sudo apt-get remove docker docker-engine docker.io containerd runc -y
+  sudo apt-get remove docker docker-engine docker.io containerd runc -qy
   success "old docker version cleaned"
 
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -94,7 +94,7 @@ function install_docker() {
   success "docker repos added successfully"
 
   sudo apt-get update
-  sudo apt-get install docker-ce docker-ce-cli containerd.io
+  sudo apt-get install -qy docker-ce docker-ce-cli containerd.io
   success "docker gpg keys added successfully"
 
   sudo usermod -aG docker "$USER"
@@ -117,7 +117,7 @@ function install_docker_compose() {
 
 function install_packages() {
   progress "Updating repos"
-  sudo apt-get update -y
+  sudo apt-get update
 
   install apt-transport-https
   install ca-certificates
