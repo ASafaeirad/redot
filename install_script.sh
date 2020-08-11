@@ -134,8 +134,14 @@ function backup() {
   success "Backup $1"
 }
 
-function cleanup() {
+function remove_packages {
   sudo apt-get remove command-not-found command-not-found-data -qy
+}
+
+function cleanup() {
+  rm "$HOME/README.md"
+  rm "$HOME/install_script.sh"
+	rm "$HOME/.editorconfig"
 }
 
 function init_redot() {
@@ -161,9 +167,10 @@ function init_redot() {
 init() {
   print_banner
   print_envs
-  cleanup
+  remove_packages
   install_packages
   init_redot
+  cleanup
 }
 
 init
