@@ -25,3 +25,12 @@ git --git-dir $REPO_PATH --work-tree $PROJECT_PATH checkout -f "\$@"
 EOF
 
 chmod +x "$REPO_PATH"/hooks/post-receive
+
+touch "$HOME/git"
+chmod +x "$HOME/git"
+
+cat <<EOF >"$HOME/git"
+#!/bin/bash
+git --git-dir $REPO_PATH --work-tree $PROJECT_PATH "\$@"
+EOF
+

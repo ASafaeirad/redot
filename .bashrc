@@ -9,7 +9,7 @@ case $- in
       *) return;;
 esac
 
-# export TERM=xterm
+export TERM=xterm
 
 # Hsitory
 shopt -s histappend
