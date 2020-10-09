@@ -1,7 +1,16 @@
 #!/bin/bash
 NAME=$1
+
+if [ -z $NAME ]; then
+  echo "usage: init <PROJECT_NAME>"
+  exit 1
+fi
+
 REPO_PATH="$HOME/$NAME.git"
 PROJECT_PATH="$HOME/$NAME"
+
+[[ -d $REPO_PATH ]] && rm -rf "$REPO_PATH"
+[[ -d $PROJECT_PATH ]] && rm -rf "$PROJECT_PATH"
 
 mkdir "$REPO_PATH"
 mkdir "$PROJECT_PATH"
@@ -12,7 +21,7 @@ popd || exit
 
 cat <<EOF >"$REPO_PATH/hooks/post-receive"
 #!/bin/bash
-git --git-dir $REPO_PATH --work-tree $PROJECT_PATH checkout -f
+git --git-dir $REPO_PATH --work-tree $PROJECT_PATH checkout -f "\$@"
 EOF
 
 chmod +x "$REPO_PATH"/hooks/post-receive
