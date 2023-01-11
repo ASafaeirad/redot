@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-DOCKER_COMPOSE_VERSION=1.25.5
+DOCKER_COMPOSE_VERSION=v2.15.1
 ARCH=$(uname -m)
 BAK_DIR="$HOME/redot-backup"
 KERNEL=$(uname -s)
@@ -84,7 +84,11 @@ function install_docker() {
     DOCKER_ARCH='amd64'
   fi
 
-  sudo apt-get remove docker docker-engine docker.io containerd runc -qy
+  sudo apt-get remove docker-engine docker.io containerd runc -qy || true
+  sudo apt-get remove docker -qy || true
+  sudo apt-get remove docker.io -qy || true
+  sudo apt-get remove containerd runc -qy || true
+  sudo apt-get remove runc -qy || true
   success "old docker version cleaned"
 
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -135,13 +139,13 @@ function backup() {
 }
 
 function remove_packages {
-  sudo apt-get remove command-not-found command-not-found-data -qy
+  sudo apt-get remove command-not-found -qy
 }
 
 function cleanup() {
   rm "$HOME/README.md"
   rm "$HOME/install_script.sh"
-	rm "$HOME/.editorconfig"
+  rm "$HOME/.editorconfig"
 }
 
 function init_redot() {
